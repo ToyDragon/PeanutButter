@@ -7,40 +7,40 @@ Run server side javascript right in your page with this nodejs module!
 
 Create a directory to contain your site
 
-> mkdir FrogTown && cd FrogTown
+    mkdir FrogTown && cd FrogTown
 
 Clone this git repo into the directory
 
-> giakdiwjoiwajiojawidjw
+    giakdiwjoiwajiojawidjw
 
 Create a basic index.html
 
-> <html>
->   <head>
->     <title>Frog Town</title>
->   </head>
->   <body>
->     <h>Welcome to frogtown!</h>
->     <script language="peanutbutter">
->       var time = (new Date()).getDate();
->       pb.print("<p>It's " + time + " here where the frogs live</p>");
->     </script>
->   </body>
-> </html>
+    <html>
+        <head>
+            <title>Frog Town</title>
+        </head>
+        <body>
+            <h>Welcome to frogtown!</h>
+            <script language="peanutbutter">
+                var time = (new Date()).getDate();
+                pb.print("<p>It's " + time + " here where the frogs live</p>");
+            </script>
+        </body>
+    </html>
 
 Create a basic server.js
 
-> 'use strict';
-> var express = require('express');
-> var pb = require('PeanutButter/src/peanutbutter.js');
-> 
-> var app = express();
-> pb.registerApp(app);
-> 
-> app.listen(8080);
+    'use strict';
+    var express = require('express');
+    var pb = require('PeanutButter/src/peanutbutter.js');
+    
+    var app = express();
+    pb.registerApp(app);
+    
+    app.listen(8080);
 
 Test your project!
 
-> node server.js
+    node server.js
 
 Connect to http://localhost:8080 to see your page!
