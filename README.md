@@ -41,6 +41,10 @@ Create a basic server.js
     
     app.listen(8080);
 
+Install express
+
+    npm install express
+
 Test your project!
 
     node server.js
