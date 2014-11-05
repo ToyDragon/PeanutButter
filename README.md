@@ -3,7 +3,7 @@ PeanutButter
 
 Run server side javascript right in your page with this nodejs module!
 
-#Creating A PeanutButter Project
+###Creating A PeanutButter Project
 
 Create a directory to contain your site
 
