@@ -22,11 +22,13 @@ Create a basic index.html
         <body>
             <h>Welcome to frogtown!</h>
             <script language="peanutbutter">
-                var time = (new Date()).getDate();
-                pb.print("<p>It's " + time + " here where the frogs live</p>");
+                var date = new Date();
+                var time = (date.getMonth()+1)+'/'+date.getDate()+'/'+date.getFullYear();
+                pb.write("<p>It's " + time + " here where the frogs live</p>");
             </script>
         </body>
     </html>
+
 
 Create a basic server.js
 
