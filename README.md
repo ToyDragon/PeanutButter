@@ -11,9 +11,9 @@ Create a directory to contain your site
 
 Clone this git repo into the directory
 
-    giakdiwjoiwajiojawidjw
+    git clone git@github.com:ToyDragon/PeanutButter.git
 
-Create a basic index.html
+Create a www folder and www/index.html
 
     <html>
         <head>
