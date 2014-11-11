@@ -1,0 +1,26 @@
+{
+  "name": "peanutbutter",
+  "version": "1.0.0",
+  "description": "Quick routing and preprocessed javascript",
+  "main": "peanutbutter.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ToyDragon/PeanutButter"
+  },
+  "author": "Matthew Bates <BatesMatthewJ@Gmail.com> (http://www.frogtown.me/)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ToyDragon/PeanutButter/issues"
+  },
+  "homepage": "https://github.com/ToyDragon/PeanutButter",
+  "dependencies" :{ 
+      "url" : "*"
+    , "util" : "*"
+    , "path" : "*"
+    , "http" : "*"
+    , "fs" : "*"
+  }
+}
