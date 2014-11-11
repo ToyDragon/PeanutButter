@@ -1,7 +1,7 @@
 PeanutButter
 ============
 
-Run server side javascript right in your page with this nodejs module!
+Run server side javascript right in your page with this nodejs module! Interact with mongodb right on the page without worry of clients being able to access your sensitive information!
 
 ###Creating A PeanutButter Project
 
@@ -51,3 +51,9 @@ Test your project!
     node server.js
 
 Connect to http://localhost:8080 to see your page!
+
+###Accessing A Mongodb Instance
+
+Install the mongoose NodeJS module
+
+    npm install mongoose
