@@ -9,10 +9,6 @@ Create a directory to contain your site
 
     mkdir FrogTown && cd FrogTown
 
-Clone this git repo into the directory
-
-    git clone git@github.com:ToyDragon/PeanutButter.git
-
 Create a www folder and www/index.html
 
     <html>
@@ -29,11 +25,14 @@ Create a www folder and www/index.html
         </body>
     </html>
 
+Install PeanutButter
 
+    npm install peanutbutter
+    
 Create a basic server.js
 
     'use strict';
-    var pb = require('../../src/peanutbutter.js');
+    var pb = require('peanutbutter');
     
     pb.registerApp();
 
