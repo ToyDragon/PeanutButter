@@ -1,4 +1,4 @@
 'use strict';
-var pb = require('../../src/peanutbutter.js');
+var pb = require('peanutbutter');
 
 pb.registerApp();
