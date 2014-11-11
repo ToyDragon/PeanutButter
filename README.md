@@ -33,18 +33,9 @@ Create a www folder and www/index.html
 Create a basic server.js
 
     'use strict';
-    var express = require('express');
-    var pb = require('PeanutButter/src/peanutbutter.js');
+    var pb = require('../../src/peanutbutter.js');
     
-    var app = express();
-    pb.registerApp(app);
-    
-    app.listen(8080);
-    console.log("Listening on port 8080");
-
-Install express
-
-    npm install express
+    pb.registerApp();
 
 Test your project!
 
