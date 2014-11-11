@@ -1,10 +1,11 @@
 var url = require('url');
 var util = require('util');
 var path = require('path');
+var http = require('http');
 var fs = require('fs');
 
 /*
- * PeanutButter.js is a NodeJS module that currently provides the ability to "register" and app
+ * PeanutButter.js is a NodeJS module that currently provides the ability to "register" an app
  *   which assigns the http routing functionality in the www folder, and preprocesses all files
  *   with whitelisted extensions to evaluate all inline javascript blocks called peanuts labeled
  *   with the <pb></pb> tags, or the <script language="peanutbutter"></script> tags.
@@ -108,15 +109,13 @@ function processAllPeanuts(page){
 }
 
 /**
- * registerApp takes an express() object, and an optional parameter for default page.
- *   It assigns a default http route handler for the express app in the routing root,
- *   and provides PeanutButter preprocessing.
+ * registerApp takes an optional port number. It assigns a default http route handler for the specified port
+ *   in the routing root and provides PeanutButter preprocessing.
  */
-exports.registerApp = function(app, page){
-	if(page !== undefined)
-		defaultPage = page;
+exports.registerApp = function(port){
+	port = port | 8080;
 
-	app.get('/*', function(req, res){
+	http.createServer(function(req, res) {
 		var requrl = url.parse(req.url,true);
 		var route = requrl.pathname;
 		var params = requrl.query;
@@ -159,9 +158,9 @@ exports.registerApp = function(app, page){
 				});
 			}
 		});
-	});
+	}).listen(port);
 
 	//Often times the registerApp could be the only method called in the base application,
 	//  give a verification message that it ran successfully
-	console.log("App Registered!");
+	console.log('App Registered to port ' + port + '!');
 }
