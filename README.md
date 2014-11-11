@@ -9,10 +9,6 @@ Create a directory to contain your site
 
     mkdir FrogTown && cd FrogTown
 
-Clone this git repo into the directory
-
-    git clone git@github.com:ToyDragon/PeanutButter.git
-
 Create a www folder and www/index.html
 
     <html>
@@ -29,22 +25,16 @@ Create a www folder and www/index.html
         </body>
     </html>
 
+Install PeanutButter
 
+    npm install peanutbutter
+    
 Create a basic server.js
 
     'use strict';
-    var express = require('express');
-    var pb = require('PeanutButter/src/peanutbutter.js');
+    var pb = require('peanutbutter');
     
-    var app = express();
-    pb.registerApp(app);
-    
-    app.listen(8080);
-    console.log("Listening on port 8080");
-
-Install express
-
-    npm install express
+    pb.registerApp();
 
 Test your project!
 
