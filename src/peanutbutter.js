@@ -3,8 +3,20 @@ var util = require('util');
 var path = require('path');
 var fs = require('fs');
 
-var defaultPage = '/index.html';
+/*
+ * PeanutButter.js is a NodeJS module that currently provides the ability to "register" and app
+ *   which assigns the http routing functionality in the www folder, and preprocesses all files
+ *   with whitelisted extensions to evaluate all inline javascript blocks called peanuts labeled
+ *   with the <pb></pb> tags, or the <script language="peanutbutter"></script> tags.
+ */
 
+//debug and config options
+var displayErrors = false;
+var displayCantFindIco = false;
+var displayQuery = false;
+var displayRoute = true;
+
+//mimeTypes for different file types to be served
 var mimeTypes = {
 	'pb'  : 'text/html',
 	'html': 'text/html',
@@ -12,55 +24,94 @@ var mimeTypes = {
 	'jpg' : 'image/jpeg',
 	'png' : 'image/png',
 	'js'  : 'text/javascript',
-	'css' : 'text/css'};
+	'css' : 'text/css'
+};
 
-var peanutpattern = /(?:<script language="peanutbutter">((?:.|[\r\n])*?)<\/script>)|(?:<pb>((?:.|[\r\n])*?)<\/pb>)/g;
-var nextpeanutpattern = /(?:<script language="peanutbutter">((?:.|[\r\n])*?)<\/script>)|(?:<pb>((?:.|[\r\n])*?)<\/pb>)/;
+//list of all processable types
+var processableTypes = {
+	'html' : true
+};
 
-function getMatches(string, regex) {
-	var matches = [];
-	var match;
-	while (match = regex.exec(string)) {
-		var raw = match[1] || match[2];
-		matches.push(raw);
-	}
-	return matches;
-}
-
+//pb is the object that peanuts will use to interact with the current page. It will be directly accessible
+//  from within a peanut.
 pb = {};
+
+//currentmessage is a helper variable that is used in evaluatePeanut to track a peanuts output
 pb.currentmessage='';
 
 pb.write = function(message){
 	pb.currentmessage+=message;
 }
 
-function evalPeanut(peanut){
+//page to route to when requesting root(IE: www.frogtown.me instead of www.frogtown.me/index.html)
+var defaultPage = '/index.html';
+
+//local folder to contain the root of the web accessible content
+var routingRoot = 'www';
+
+//regex patterns to recongnize and retreive peanuts out of a file
+var patternAllPeanuts = /(?:<script language="peanutbutter">((?:.|[\r\n])*?)<\/script>)|(?:<pb>((?:.|[\r\n])*?)<\/pb>)/g;
+var patternNextPeanut = /(?:<script language="peanutbutter">((?:.|[\r\n])*?)<\/script>)|(?:<pb>((?:.|[\r\n])*?)<\/pb>)/;
+
+/**
+ * This is a helper method used in processing. returns true if processableTypes contains a true value for this extension
+ */
+function isProcessableExtension(extension){
+	return processableTypes[extension];
+}
+
+/**
+ * getPeanuts provides an easy method to get all peanuts from a string
+ */
+function getPeanuts(string) {
+	var matches = [];
+	var match;
+	while (match = patternAllPeanuts.exec(string)) {
+		var raw = match[1] || match[2];
+		matches.push(raw);
+	}
+	return matches;
+}
+
+/**
+ * evaluatePeanut runs a single peanut in the javascript runtime, and then returns the content of the
+ *   currentmessage variable, which is written by the peanut with pb.write
+ */
+function evaluatePeanut(peanut){
 	pb.currentmessage='';
 	eval(peanut);
 	return pb.currentmessage;
 }
 
-function processPage(page){
-	var peanuts = getMatches(page, peanutpattern, 2);
+/**
+ * processAllPeanuts accepts a raw string as input and parses the string for peanuts, and then replaces the peanuts
+ *   with their evaluated results. It returns the processed string.
+ */
+function processAllPeanuts(page){
+	var peanuts = getPeanuts(page);
 	var results = [];
-	var test = '';
-	//console.log('Loading peanuts');
-	for(i in peanuts){
-		peanut = peanuts[i];
-		var peanuteval = '';
+	for(peanut_i in peanuts){
+		peanut = peanuts[peanut_i];
+		var peanutEvaluation = '';
 		try{
-			peanuteval = evalPeanut(peanut);
+			peanutEvaluation = evaluatePeanut(peanut);
 		}catch(error){
-			peanuteval = 'Error evaluating peanut('+error+')';
+			if(displayErrors){
+				peanutEvaluation = 'Error evaluating peanut('+error+')';
+			}
 		}
-		page = page.replace(nextpeanutpattern, peanuteval);
-		results.push(peanuteval);
-		test += results[i];
+		page = page.replace(patternNextPeanut, peanutEvaluation);
+		results.push(peanutEvaluation);
 	}
 
 	return page;
 }
 
+/**
+ * registerApp takes an express() object, and an optional parameter for default page.
+ *   It assigns a default http route handler for the express app in the routing root,
+ *   and provides PeanutButter preprocessing.
+ */
 exports.registerApp = function(app, page){
 	if(page !== undefined)
 		defaultPage = page;
@@ -69,38 +120,48 @@ exports.registerApp = function(app, page){
 		var requrl = url.parse(req.url,true);
 		var route = requrl.pathname;
 		var params = requrl.query;
+
 		if(route === '/' || route === ''){
 			route = defaultPage;
 		}
-		console.log('Routing('+route+')');
-		console.log('Query('+util.inspect(params)+')');
-		var filename = path.join(process.cwd(), "www"+route);
+
+		if(displayRoute)console.log('Routing('+route+')');
+		if(displayQuery)console.log('Query('+util.inspect(params)+')');
+
+		var filename = path.join(process.cwd(), routingRoot+route);
 
 		var exists = path.exists || fs.exists;
 
 		exists(filename, function(exists) {
+			var fileExtension = path.extname(filename).split('.')[1];
+
 			if(!exists) {
-				console.log('File doesn\' exist: ' + filename);
+				if(fileExtension !== 'ico' || displayCantFindIco){
+					console.log('Could not open file: ' + filename);
+				}
 				res.writeHead(200, {'Content-Type': 'text/plain'});
 				res.write('404 Not Found\n');
 				res.end();
 			}else{
-				var mimeType = mimeTypes[path.extname(filename).split('.')[1]];
+				var mimeType = mimeTypes[fileExtension];
 				res.writeHead(200, mimeType);
 				fs.readFile(filename, 'utf8', function(err,data){
-					//data = util.inspect(processPage(data));
-					if(params.nopeanutbutter !== ''){
 
-						data = processPage(data);
+					//if this is filetype is in the processable white list, process it
+					if(isProcessableExtension(fileExtension)){
+						if(params.nopeanutbutter !== ''){
+							data = processAllPeanuts(data);
+						}
 					}
-					//console.log(data);
-					//console.log(req.params[1]);
+
 					res.write(data);
 					res.end();
 				});
 			}
-		}); //end path.exist
+		});
 	});
 
+	//Often times the registerApp could be the only method called in the base application,
+	//  give a verification message that it ran successfully
 	console.log("App Registered!");
 }
