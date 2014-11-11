@@ -1,0 +1,28 @@
+<html>
+	<head>
+		<title>Frog Town</title>
+		<script language="peanutbutter">
+			var mongoose = require('mongoose');
+			mongoose.connect('mongodb://localhost/test');
+
+			var Frog = mongoose.model('Frog', { name: String });
+
+			var frog = new Frog({ name: 'Alby' });
+			frog.save(function (err) {
+				if (err) return pb.write('error saving: ' + err);
+				pb.write('I\'m Alby!');
+			});
+
+			Frog.find(function (err, frogs) {
+				if (err) return pb.write('error finding: ' + err);
+				pb.write(frogs)
+			})
+		</script>
+	</head>
+	<body>
+		<h>Here are the frogs!</h>
+		<script language="peanutbutter">
+			pb.write('test');
+		</script>
+	</body>
+</html>
